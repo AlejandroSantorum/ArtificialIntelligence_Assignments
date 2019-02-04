@@ -1,0 +1,2 @@
+# ArtificialIntelligence_Assignments
+Assignments for Artificial Intelligence subject
