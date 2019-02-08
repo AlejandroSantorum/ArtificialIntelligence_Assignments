@@ -10,12 +10,44 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defun insert-inorder(x lst)
+(defun calculate-confidence(x y)
+  (let
+      ((sx (squares x))
+       (sy (squares y)))
+    (cond
+     ((and (= 0 sx)
+           (= 0 sy))
+      1)          ;;;;
+     ((= 0 sx) 0) ;;;; MEMORIA
+     ((= 0 sy) 0) ;;;;
+     (T (/ (inner-product-m x y)
+              (* (sqrt sx)(sqrt sy))))))))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun insert-vector-inorder(x lst)
   (cond
    ((null lst) (cons x NIL))
-   ((< x (first lst)) (cons x lst))
-   (T (cons (first lst) (insert-inorder x (rest lst))))))
+   ((< (calculate-confidence x (first lst))) (cons x lst))
+   (T (cons (first lst) (insert-vector-inorder x (rest lst))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun confidence-predicate(x y confidence)
+  (if (> (calculate-confidence x y) confidence)
+      T
+    NIL))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun confidence-filter(vector lst-of-vectors confidence)
+  (if (> (calculate-confidence vector (first lst-of-vectors)) confidence)
+      (cons (first lst-of-vectors) (confidence-filter vector (rest lst-of-vectors) confidence))
+    (confidence-filter vector (rest lst-of-vectors) confidence)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; 
+  
+
 (defun order-vectors-cosine-distance(vector lst-of-vectors &optional (confidence-level 0))
+  
+  
   
