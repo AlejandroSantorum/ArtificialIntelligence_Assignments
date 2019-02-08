@@ -32,22 +32,33 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defun confidence-predicate(x y confidence)
-  (if (> (calculate-confidence x y) confidence)
-      T
-    NIL))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 (defun confidence-filter(vector lst-of-vectors confidence)
-  (if (> (calculate-confidence vector (first lst-of-vectors)) confidence)
-      (cons (first lst-of-vectors) (confidence-filter vector (rest lst-of-vectors) confidence))
-    (confidence-filter vector (rest lst-of-vectors) confidence)))
+  (if (null lst-of-vectors)
+      NIL
+    (let
+        ((aux (calculate-confidence vector (first lst-of-vectors))))
+      (if (> aux confidence)
+        (cons (cons (list aux) (first lst-of-vectors)) (confidence-filter vector (rest lst-of-vectors) confidence))
+      (confidence-filter vector (rest lst-of-vectors) confidence)))))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun order-with-confidence(vector lst-of-vectors confidence)
+  (if (null lst-of-vectors)
+      NIL
+    (cons 
   
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defun order-vectors-cosine-distance(vector lst-of-vectors &optional (confidence-level 0))
   
   
-  
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun confidence-filter(vector lst-of-vectors confidence)
+  (if (null lst-of-vectors)
+      NIL
+    (if (> (calculate-confidence vector (first lst-of-vectors)) confidence)
+        (cons (first lst-of-vectors) (confidence-filter vector (rest lst-of-vectors) confidence))
+      (confidence-filter vector (rest lst-of-vectors) confidence))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

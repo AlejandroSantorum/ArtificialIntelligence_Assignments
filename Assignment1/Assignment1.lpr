@@ -3,8 +3,8 @@
 (in-package :cg-user)
 
 (define-project :name :|Assignment1|
-  :modules (list (make-instance 'module :name "exercise1.lc")
-                 (make-instance 'module :name "exercise2"))
+  :modules (list (make-instance 'module :name "exercise2")
+                 (make-instance 'module :name "exercise1"))
   :projects nil
   :libraries nil
   :editable-files nil
