@@ -90,7 +90,7 @@
          (mapcar #'* x y)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;  
-(defun cosine-distance-m (x y)
+(defun cosine-distance-mapcar (x y)
   (let
       ((sx (squares-m x))
        (sy (squares-m y)))
