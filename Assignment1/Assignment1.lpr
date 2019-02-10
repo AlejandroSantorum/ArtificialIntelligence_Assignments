@@ -1,10 +1,11 @@
-;; -*- lisp-version: "10.1 [32-bit Windows] (Jan 9, 2019 10:44)"; -*-
+;; -*- lisp-version: "10.1 [32-bit Windows] (Feb 1, 2019 16:15)"; -*-
 
 (in-package :cg-user)
 
 (define-project :name :|Assignment1|
   :modules (list (make-instance 'module :name "exercise2")
-                 (make-instance 'module :name "exercise1"))
+                 (make-instance 'module :name "exercise1")
+                 (make-instance 'module :name "exercise3"))
   :projects nil
   :libraries nil
   :editable-files nil
