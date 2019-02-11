@@ -10,12 +10,20 @@
 ;;                                                                            ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-( defun combine-elt-lst ( elt lst )
+(defun combine-elt-lst ( elt lst )
   (if (null lst)
       NIL
-    (cons (cons elt (cons (first lst) NIL)) (combine-elt-lst elt (rest lst)))))
+    (cons (list elt (first lst)) (combine-elt-lst elt (rest lst)))))
 
-( defun combine-lst-lst ( lst1 lst2 )
+(defun combine-lst-lst ( lst1 lst2 )
   (if (null lst1)
       NIL
-    (cons (combine-elt-lst (first lst1) lst2) (combine-lst-lst (rest lst1) lst2))))
+    (union (combine-elt-lst (first lst1) lst2) (combine-lst-lst (rest lst1) lst2))))
+
+(defun combine-list-of-lsts (lstolsts)
+  (cond
+   ((null lstolsts)
+    NIL)
+   ((null(rest lstolsts))
+    (first lstolsts))
+   (T (combine-lst-lst (first lstolsts) (combine-list-of-lsts (rest lstolsts))))))
