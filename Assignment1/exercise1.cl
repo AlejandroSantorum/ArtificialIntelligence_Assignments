@@ -53,7 +53,7 @@
 ;;        y: second vector given as a list
 ;; OUTPUT: cosine distance between x and y
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(defun consine-distance-rec(x y)
+(defun cosine-distance-rec(x y)
   (let
       ((sx (squared-norm-rec x))
        (sy (squared-norm-rec y)))
