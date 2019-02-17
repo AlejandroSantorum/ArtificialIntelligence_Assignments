@@ -69,4 +69,24 @@
     (append '(v) (cons (append '(^) (cons (second lst) (cons (third lst) NIL))) (cons (append '(^) (cons (append '(!) (second lst)) (cons (append '(!) (cons (third lst) NIL)) NIL ))) NIL))))
    (T
     (append '(v) (cons (append '(^) (cons (second lst) (cons (third lst) NIL))) (cons (append '(^) (cons (append '(!) (second lst)) (cons (append '(!) (third lst)) NIL ))) NIL))))
-    ))
+   ))
+
+(defun double-neg-exp (lst)
+  (third lst))
+
+(defun cond-neg-exp (lst)
+  (if (positive-literal-p (fourth lst))
+      (append '(^) (cons (third lst) (cons (append '(!) (cons (fourth lst) NIL)) NIL)))
+    (append '(^) (cons (third lst) (cons (append '(!) (fourth lst)) NIL)))))
+
+(defun bicond-neg-exp (lst)
+  (cond
+   ((and (positive-literal-p (third lst)) (positive-literal-p (fourth lst)))
+    (append '(v) (cons (append '(^) (cons (third lst) (cons (append '(!) (cons (fourth lst) NIL)) NIL))) (cons (append '(^) (cons (append '(!) (cons (third lst) NIL)) (cons (fourth lst) NIL))) NIL))))
+   ((positive-literal-p (third lst))
+    (append '(v) (cons (append '(^) (cons (third lst) (cons (append '(!) (fourth lst)) NIL ))) (cons (append '(^) (cons (append '(!) (cons (third lst) NIL)) (cons (fourth lst) NIL))) NIL))))
+   ((positive-literal-p (fourth lst))
+    (append '(v) (cons (append '(^) (cons (third lst) (cons (append '(!) (cons (fourth lst) NIL)) NIL))) (cons (append '(^) (cons (append '(!) (third lst)) (cons (fourth lst) NIL))) NIL))))
+   (T
+    (append '(v) (cons (append '(^) (cons (third lst) (cons (append '(!) (fourth lst)) NIL))) (cons (append '(^) (cons (append '(!) (third lst)) (cons (fourth lst) NIL))) NIL))))
+   ))
