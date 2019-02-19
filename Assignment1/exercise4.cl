@@ -1,4 +1,4 @@
- ( defconstant +bicond+ '<=>)
+( defconstant +bicond+ '<=>)
  ( defconstant +cond+ '=>)
  ( defconstant +and+ '^)
  ( defconstant +or+ 'v )
@@ -44,15 +44,131 @@
  (or ( positive-literal-p x )
  ( negative-literal-p x )))
 
+(defun and-connector-p(x)
+  (eql x +and+))
+
+(defun or-connector-p(x)
+  (eql x +or+))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun cond-expand (lst) ;;;;;;; OJO!! A LA FUNCION YA NO LE PASAMOS EL OPERADOR COND
+  (append
+   (cons 'v (cons (cons
+                   '! 
+                   (cons (first lst) NIL)) 
+                  NIL)) 
+   (cons (second lst) NIL)))
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; It gets (A B) and it has to return (^ (! A) (! B));;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defun _bicond-neg-part (lst) 
+  (append 
+   (cons '^ (cons (cons '! (cons (first lst) NIL)) NIL)) ;; Forming (^ (! A))
+   (cons (cons '! (cons (second lst) NIL)) NIL)))        ;; Forming (! B) + append
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; It gets (A B) and it has to return (^ A B);;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defun _bicond-pos-part (lst) 
+  (append
+   (cons '^ (cons (first lst) NIL))  ;; Forming (^ A)
+   (cons (second lst) NIL)))         ;; Forming B + append
+
+(defun bicond-expand (lst)
+  (append 
+   (cons 'v (cons (_bicond-pos-part lst) NIL)) ;; (cons smth NIL) to force parenthesis
+   (cons (_bicond-neg-part lst) NIL)))
+
+
+
+
+
+(defun neg-cond-expand (lst)
+  (append 
+   (cons '^ (cons (first lst) NIL)) 
+   (cons (cons '! (cons (second lst) NIL)) NIL)))
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; It gets (A B) and it has to return (^ A (! B));;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defun _neg-bicond-part1 (lst)
+  (append
+   (cons '^ (cons (first lst) NIL))                 ;; Forming (^ A)
+   (cons (cons '! (cons (second lst) NIL)) NIL )))  ;; Forming (! B) + append
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; It gets (A B) and it has to return (^ (! A) B);;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defun _neg-bicond-part2 (lst)
+  (append
+   (cons '^ (cons (cons '! (cons (first lst) NIL)) NIL)) ;; Forming (^ (! A)
+   (cons (second lst) NIL)))                             ;; Forming B + append
+
+(defun neg-bicond-expand (lst)
+  (append
+   (cons 'v (cons (_neg-bicond-part1 lst) NIL)) 
+   (cons (_neg-bicond-part2 lst) NIL)))
+  
+
+(defun neg-expand (lst)
+  (cond
+   ((bicond-connector-p (first lst))
+    (neg-bicond-expand (rest lst)))
+   ((cond-connector-p (first lst))
+    (neg-cond-expand (rest lst)))
+   ((unary-connector-p (first lst))
+    (expand (rest lst)))  ;;;;;;;;;;;;;;;; OJOOOOOOOOOOOOO RECURSIVO?
+   (T NIL)))
 
 
 (defun expand (lst)
   (cond
+   ((null lst)
+    NIL)
+   ((bicond-connector-p (first lst))
+    (bicond-expand (rest lst)))
+   ((cond-connector-p (first lst))
+    (cond-expand (rest lst)))
+   ((unary-connector-p (first lst))
+    (neg-expand (rest lst)))
+   (T NIL)))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defun expand2 (lst)
+  (cond
+   ((null lst)
+    NIL)
    ((bicond-connector-p (first lst))
     (bicond-exp lst))
    ((cond-connector-p (first lst))
     (cond-exp lst))
+   ((unary-connector-p (first lst))
+    (neg-exp lst))
    (T NIL)))
+  
+  
+  
+(defun neg-exp (lst)
+  (cond
+   ((bicond-connector-p (second lst))
+    (bicond-neg-exp lst))
+   ((cond-connector-p (second lst))
+    (cond-neg-exp lst))
+   ((unary-connector-p (second lst))
+    (double-neg-exp lst))
+   ((FALTA LA DOBLE NEGACIOOOOON)
+    
 
 (defun cond-exp (lst)
   (if (positive-literal-p (second lst))
