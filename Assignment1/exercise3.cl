@@ -81,3 +81,45 @@
   (if (null lstolsts)
       '(NIL)
     (comb-lst-consLst (first lstolsts) (comb-lst-of-lsts (rest lstolsts)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun elt-lstoflsts-merge (elt lstoflsts)
+  (if (null lstoflsts)
+      NIL
+    (cons 
+     (append (first lstoflsts) (list elt))
+     (elt-lstoflsts-merge elt (rest lstoflsts)))))
+
+(defun lst-lstoflsts-merge (lst lstoflsts)
+  (if (null (rest lst))
+      (elt-lstoflsts-merge (first lst) lstoflsts)
+    (lst-lstoflsts-merge 
+     (rest lst) 
+     (elt-lstoflsts-merge (first lst) lstoflsts))))
+
+
+
+(defun double-or-merge (lst lstrec)
+  (if (null (rest lst))
+      (elt-lstoflsts-merge (caar lst) lstrec)
+    (union
+     (elt-lstoflsts-merge (caar lst) lstrec)
+     (double-or-merge (rest lst) lstrec))))
+
+
+(defun double-and-merge (lst lstrec)
+  (if (null (rest lst))
+      (append lstrec (list (first lst)))
+    (append (double-and-merge (rest lst) lstrec) (list (first lst)))))
+  
+  
+
+  
+  
+  
+  

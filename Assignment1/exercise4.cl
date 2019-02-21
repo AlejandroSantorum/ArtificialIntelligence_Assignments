@@ -83,8 +83,8 @@
    ((cond-connector-p (first lst))
     (neg-cond-expand (rest lst)))
    ((unary-connector-p (first lst))
-    (expand (rest lst)))  ;;;;;;;;;;;;;;;; OJOOOOOOOOOOOOO RECURSIVO?
-   (T NIL)))
+    (rest lst)
+   (T NIL))))
 
 
 (defun or-expand (lst)
@@ -92,18 +92,14 @@
       NIL
     (if (positive-literal-p (first lst))
         (cons (cons (first lst) NIL) (or-expand (rest lst)))
-      (if (negative-literal-p (first lst))
-          (cons (first lst) (or-expand (rest lst)))
-        (cons (expand (first lst)) (or-expand (rest lst)))))))
+      (cons (expand (first lst)) (or-expand (rest lst))))))
+  
 
 (defun and-expand (lst)
-  (if (null lst)
-      NIL
-    (if (positive-literal-p (first lst))
-        (append (cons (first lst) NIL) (and-expand (rest lst)))
-      (if (negative-literal-p (first lst))
-          (append (cons (first lst) NIL) (and-expand (rest lst)))
-        (append (cons (expand (first lst)) NIL) (and-expand (rest lst)))))))
+  (COMBIENENE (expand (first lst)) (and-expand (rest lst))
+  
+  
+    
 
 (defun expand (lst)
   (cond
@@ -111,12 +107,14 @@
     NIL)
    ((not (connector-p (first lst)))
     lst)
+   ((literal-p lst)
+    lst)
    ((bicond-connector-p (first lst))
     (expand (bicond-expand (rest lst))))
    ((cond-connector-p (first lst))
     (expand (cond-expand (rest lst))))
    ((unary-connector-p (first lst))
-    (expand (neg-expand (rest lst))))
+    (expand (neg-expand (first (rest lst)))))
    ((and-connector-p (first lst))
     (and-expand (rest lst)))
    ((or-connector-p (first lst))
@@ -154,3 +152,23 @@
   (append
    (cons +and+ (cons (first lst) NIL))  ;; Forming (^ A)
    (cons (second lst) NIL)))         ;; Forming B + append
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defun or-expand-old (lst)
+  (if (null lst)
+      NIL
+    (if (positive-literal-p (first lst))
+        (cons (first lst) (or-expand (rest lst)))
+      (if (negative-literal-p (first lst))
+          (cons (first lst) (or-expand (rest lst)))
+        (cons (expand (first lst)) (or-expand (rest lst)))))))
+
+(defun and-expand-old (lst)
+  (if (null (rest lst))
+      (expand (first lst))
+    (if (positive-literal-p (first lst))
+        (append (cons (first lst) NIL) (and-expand (rest lst)))
+      (if (negative-literal-p (first lst))
+          (append (cons (first lst) NIL) (and-expand (rest lst)))
+        (comb-lst-lst (expand (first lst)) (and-expand (rest lst)))))))
