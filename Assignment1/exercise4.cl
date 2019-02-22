@@ -118,11 +118,15 @@
 (defun neg-expand (lst)
   (cond
    ((bicond-connector-p (first lst))
-    (neg-bicond-expand (rest lst)))
+    (expand (neg-bicond-expand (rest lst))))
    ((cond-connector-p (first lst))
-    (neg-cond-expand (rest lst)))
+    (expand (neg-cond-expand (rest lst))))
    ((unary-connector-p (first lst))
-    (rest lst))
+    (expand (first (rest lst))))
+   ((and-connector-p (first lst))
+    (or-expand (multi-negator (rest lst))))
+   ((or-connector-p (first lst))
+    (and-expand (multi-negator (rest lst))))
    (T NIL)))
 
 
@@ -147,7 +151,7 @@
    ((cond-connector-p (first lst))
     (expand (cond-expand (rest lst))))
    ((unary-connector-p (first lst))
-    (expand (neg-expand (first (rest lst)))))
+    (neg-expand (first (rest lst))))
    ((and-connector-p (first lst))
     (and-expand (rest lst)))
    ((or-connector-p (first lst))
