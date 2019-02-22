@@ -157,3 +157,38 @@
    ((or-connector-p (first lst))
     (or-expand (rest lst)))
    (T NIL)))
+
+(defun negate-atom (atom)
+  (cond
+   ((positive-literal-p atom)
+    (cons '! (cons atom NIL)))
+   ((negative-literal-p atom)
+    (first (rest atom)))
+   (T NIL)))
+
+(defun contains (elt lst)
+  (cond
+   ((null lst)
+    NIL)
+   ((equal elt (first lst))
+    T)
+   (T (contains elt (rest lst)))))
+
+(defun is-sat (check-lst lst)
+  (cond
+   ((null lst)
+    T)
+   ((contains (negate-atom (first lst)) check-lst)
+    NIL)
+   (T (is-sat (append check-lst (cons (first lst) NIL)) (rest lst)))))
+
+(defun check-sat (lst)
+  (cond
+   ((null lst)
+    NIL)
+   ((is-sat NIL (first lst))
+    T)
+   (T (check-sat (rest lst)))))
+
+(defun truth-tree (lst)
+     (check-sat (expand lst)))
