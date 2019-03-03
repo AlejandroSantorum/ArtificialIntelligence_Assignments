@@ -166,22 +166,23 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defun insert-vector-inorder(x lst vector)
   (cond
-   ((null lst) (cons x NIL))
+   ((null lst) (list x))
    ((> 
      (calculate-confidence-mapcar x vector) 
      (calculate-confidence-mapcar (first lst) vector)) 
     (cons x lst))
-   (T (cons (first lst) (insert-vector-inorder x (rest lst) vector)))))
+   (T (cons 
+       (first lst) 
+       (insert-vector-inorder x (rest lst) vector)))))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; FALTAAN COMENTARIOS;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; order-list-confidence
-;; It inserts the given vector into an ordered list by its confidence level
+;; It orders a list based on the confidence between each element and a fixed vector
 ;;
-;; INPUT: x: vector to be inserted
-;;        vector: vector that represents a category
-;;        lst: list of vectors that each of them represents a text
-;; OUTPUT: ordered list with x inserted
+;; INPUT: vector: fixed vector (model)
+;;        lst-of-vectors: list of vectors
+;; OUTPUT: lst-of-vectors ordered
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defun order-list-confidence(vector lst-of-vectors)
   (if (null lst-of-vectors)
@@ -191,10 +192,21 @@
      (order-list-confidence vector (rest lst-of-vectors)) 
      vector)))
   
-;;;;;;;;;;;;;;;;;;;;;;;;; FALTANNNNNNNNNNN COMENTARIOS;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; order-vectors-cosine-distance
+;;; Return those vectors similar to a category
+;;; INPUT:  vector: vector that represents a category,
+;;;                 represented as a list
+;;;         lst-of-vectors: list of vectors represented as a list
+;;;         confidence-level: Confidence level (optional parameter)
+;;; OUTPUT: ordered vectors that has greater confidence level to
+;;;         the category than the threshold confidence level
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defun order-vectors-cosine-distance(vector lst-of-vectors &optional (confidence-level 0))
-  (order-list-confidence vector (confidence-filter vector lst-of-vectors confidence-level)))
+  (order-list-confidence 
+   vector 
+   (confidence-filter vector lst-of-vectors confidence-level)))
 
 
                          ;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -242,6 +254,7 @@
     (let
         ((aux (get-best-category categories (first texts) distance-measure)))
       (cons
-       (cons (caar aux) (rest aux)) ;;;Getting identifier + distance
+       (cons (caar aux) (rest aux)) ;;Getting identifier + distance
        (get-vectors-category categories (rest texts) distance-measure)))))
+
  

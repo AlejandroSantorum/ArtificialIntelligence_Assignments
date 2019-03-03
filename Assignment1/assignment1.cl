@@ -6,7 +6,7 @@
 ;;     · Alejandro Santorum Varela - alejandro.santorum@estudiante.uam.es     ;;
 ;;     · Sergio Galan Martin - sergio.galanm@estudiante.uam.es                ;;
 ;;   DATE: February 25, 2019                                                  ;;
-;;   VERSION: 1.3                                                             ;;
+;;   VERSION: 1.4                                                             ;;
 ;;                                                                            ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -791,7 +791,7 @@
 ;; OUTPUT: shortest path from any of the starting nodes to end
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defun bfs (end queue net)
-  (if (null queue)
+  (if (null queue) ;; return error (si lista vacia)
       '()
     (let* ((path (first queue)) 
            (node (first path))) ;; m = C.pop()

@@ -6,87 +6,94 @@
 ;;     · Alejandro Santorum Varela - alejandro.santorum@estudiante.uam.es     ;;
 ;;     · Sergio Galan Martin - sergio.galanm@estudiante.uam.es                ;;
 ;;   DATE: February 10, 2019                                                  ;;
-;;   VERSION: 1.0                                                             ;;
+;;   VERSION: 1.2                                                             ;;
 ;;                                                                            ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defun combine-elt-lst ( elt lst )
-  (if (null lst)
-      NIL
-    (cons 
-     (cons elt (cons (first lst) NIL)) 
-     (combine-elt-lst elt (rest lst)))))
-
-(defun combine-lst-lst ( lst1 lst2 )
-  (if (null lst1)
-      NIL
-    (union 
-     (combine-elt-lst (first lst1) lst2)
-     (combine-lst-lst (rest lst1) lst2))))
-
-(defun combine-list-of-lsts (lstolsts)
-  (cond
-   ((null lstolsts)
-    NIL)
-   ((null(rest lstolsts))
-    (first lstolsts))
-   (T (combine-lst-lst (first lstolsts) (combine-list-of-lsts (rest lstolsts))))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(defun combine-elt-lst2 (elt lst)
+                         ;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;     exercise 3.1     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                         ;;;;;;;;;;;;;;;;;;;;;;;;;;
+              
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; combine-elt-lst
+;; It combines an element with the elements of a given list
+;;
+;; INPUT: elt: element to be combined
+;;				lst: list of elements
+;; OUTPUT: list where the given element is combined with the elements of the list
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;               
+(defun combine-elt-lst( elt lst )
   (mapcar #'(lambda (x) (cons elt x)) lst))
+  
+                         ;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;     exercise 3.2     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                         ;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defun combine-lst-lst2 (lst1 lst2)
-  (mapcan #'(lambda (x) (combine-elt-lst2 x lst2)) lst1))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; combine-lst-lst
+;; It calculates the cartesian product of two lists
+;;
+;; INPUT: lst1: first list of elements
+;;				lst2: second list of elements
+;; OUTPUT: cartesian product of both lists
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defun combine-lst-lst (lst1 lst2)
+  (mapcan #'(lambda (x) (combine-elt-lst x lst2)) lst1))
 
-(defun combine-list-of-lsts2 (lst)
-  (if (null (cdr lst))
-      (car lst)
-    (if (null (cddr lst))
-        (combine-lst-lst2 (car lst) (cadr lst))
-      (combine-lst-lst2 (car lst) (combine-list-of-lsts2 (cdr lst))))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(defun comb-elt-lst ( elt lst )
-  (if (null lst)
-      NIL
-    (cons 
-     (cons elt (cons (first lst) NIL)) 
-     (comb-elt-lst elt (rest lst)))))
-
-(defun comb-elt-consLst(elt lst)
+                         ;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;     exercise 3.3     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                         ;;;;;;;;;;;;;;;;;;;;;;;;;;
+                         
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; combine-elt-lstAux
+;; Auxiliary function for combine-lst-lstAux that is thought to work with
+;; conses (not atoms)
+;;
+;; INPUT: elt: element that is suppossed to be a cons
+;;				lst: list of elements
+;; OUTPUT: list where the given element is combined with the elements of the list
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;              
+(defun combine-elt-lstAux(elt lst)
   (if (null lst)
       NIL
     (cons
      (cons elt (first lst))
-     (comb-elt-consLst elt (rest lst)))))
+     (combine-elt-lstAux elt (rest lst)))))
 
-(defun comb-lst-lst (lst1 lst2)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; combine-lst-lstAux
+;; Auxiliary function for combine-lst-of-lsts that calls combine-elt-lstAux
+;;
+;; INPUT: lst1: first list of elements
+;;				lst2: second list of elements
+;; OUTPUT: cartesian product of both lists
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defun combine-lst-lstAux (lst1 lst2)
   (if (null lst1)
       NIL
     (append
-     (comb-elt-lst (first lst1) lst2)
-     (comb-lst-lst (rest lst1) lst2))))
+     (combine-elt-lstAux(first lst1) lst2)
+     (combine-lst-lstAux (rest lst1) lst2))))
 
-(defun comb-lst-consLst (lst1 lst2)
-  (if (null lst1)
-      NIL
-    (append
-     (comb-elt-consLst(first lst1) lst2)
-     (comb-lst-consLst (rest lst1) lst2))))
-
-(defun comb-lst-of-lsts(lstolsts)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; combine-lst-of-lsts
+;; It calculates all the posible element dispositions of N different lists,
+;; so in its disposition only appears one element of each list
+;;
+;; INPUT: lstolsts: list of lists
+;; OUTPUT: list of lists with all the posible dispositions
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defun combine-lst-of-lsts(lstolsts)
   (if (null lstolsts)
       '(NIL)
-    (comb-lst-consLst (first lstolsts) (comb-lst-of-lsts (rest lstolsts)))))
+    (combine-lst-lstAux (first lstolsts) (combine-lst-of-lsts (rest lstolsts)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;; TESTING FUNCTION OF LISTS FOR OTHER FILES ;;;;;;;;;;;;
 
 (defun elt-lstoflsts-merge (elt lstoflsts)
   (if (null lstoflsts)
