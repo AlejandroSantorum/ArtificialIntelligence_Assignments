@@ -176,7 +176,7 @@
        (insert-vector-inorder x (rest lst) vector)))))
 
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; FALTAAN COMENTARIOS;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; order-list-confidence
 ;; It orders a list based on the confidence between each element and a fixed vector
 ;;
