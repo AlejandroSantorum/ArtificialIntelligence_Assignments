@@ -379,7 +379,7 @@
 ;;    given one
 ;;
 (defun expand-node (node problem)
-  (mapcan #'(lambda (x) (if (null x) NIL (list x)))
+  (mapcan #'(lambda (x) (if (null x) NIL x))
     (mapcar #'(lambda (x) (expand-node-operator node x (problem-f-h problem)))
       (problem-operators problem))))
 
@@ -431,8 +431,6 @@
 ;;;  The last function, insert-node-strategy is a simple interface that
 ;;;  receives a strategy, extracts from it the comparison function,
 ;;;  and calls insert-nodes
-
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ;; Inserts a list of nodes in an ordered list keeping the result list
@@ -452,8 +450,23 @@
 ;;   criterion node-compare-p.
 ;;
 (defun insert-nodes (nodes lst-nodes node-compare-p)
-  )
+  (if (null  nodes)
+      lst-nodes
+    (insert-nodes (rest nodes) (insert-node-aux
+                                   (first nodes)
+                                   lst-nodes
+                                   node-compare-p) node-compare-p)))
 
+(defun insert-node-aux (node lst-nodes node-compare-p)
+  (cond
+   ((null lst-nodes) (list node))
+   ((funcall node-compare-p node (first lst-nodes))
+    (cons node lst-nodes))
+   (T (cons
+       (first lst-nodes)
+       (insert-node-aux node (rest lst-nodes) node-compare-p)))
+   ))
+  
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ;; Inserts a list of nodes in an ordered list keeping the result list
@@ -469,7 +482,7 @@
 ;;
 ;; Returns:
 ;;    An ordered list of nodes which includes the nodes of lst-nodes and
-;;    those of the list "nodes@. The list is ordered with respect to the
+;;    those of the list "nodes". The list is ordered with respect to the
 ;;    criterion defined in te strategy.
 ;;
 ;; Note:
@@ -479,8 +492,7 @@
 ;;   use it to call insert-nodes.
 ;;
 (defun insert-nodes-strategy (nodes lst-nodes strategy)
-  )
-
+  (insert-nodes nodes lst-nodes (strategy-node-compare-p strategy)))
 ;;
 ;;    END: Exercize 7 -- Node list management
 ;;
@@ -496,8 +508,13 @@
 ;; node to be analyzed is the one with the smallest value of g+h
 ;;
 (defparameter *A-star*
-  (make-strategy ))
+  (make-strategy 
+   :name 'a-star
+   :node-compare-p #'node-f-<=))
 
+(defun node-f-<= (node-1 node-2)
+  (<= (node-f node-1)
+      (node-f node-2)))
 ;;
 ;; END: Exercise 8 -- Definition of the A* strategy
 ;;
