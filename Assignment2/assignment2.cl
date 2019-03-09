@@ -579,15 +579,19 @@
 ;;
 (defun graph-search-aux (problem open-nodes closed-nodes strategy)
   (let 
-      ((exp-node (first open-nodes))
-       (cl-node (first (member (first open-nodes) closed-nodes :test (problem-f-search-state-equal problem)))))
-    (cond ((and (not (null cl-node)) (funcall (strategy-node-compare-p strategy) cl-node exp-node))
-           (graph-search-aux problem (rest open-nodes) closed-nodes strategy))
-          ((funcall (problem-f-goal-test problem) exp-node) exp-node)
-          (T (graph-search-aux problem (insert-nodes (expand-node exp-node problem) (rest open-nodes) 
+      ((exp-node (first open-nodes)) ;; Nodo a expandir
+       (cl-node (first (member (first open-nodes) closed-nodes :test 
+                               (problem-f-search-state-equal problem))))) ;; Nodo de la lista de cerrados equivalente a exp-node
+    (cond ((null exp-node)                                                ;; Puede ser NIL
+           NIL)
+          ((funcall (problem-f-goal-test problem) exp-node) 
+           exp-node)
+          ((or (null cl-node) (funcall (strategy-node-compare-p strategy) exp-node cl-node))
+           (graph-search-aux problem (insert-nodes (expand-node exp-node problem) (rest open-nodes) 
                                                      (strategy-node-compare-p strategy)) 
                                (insert-nodes (list exp-node) closed-nodes 
-                                             (strategy-node-compare-p strategy)) strategy))))) ;; Limpiar el código
+                                             (strategy-node-compare-p strategy)) strategy))
+          (T (graph-search-aux problem (rest open-nodes) closed-nodes strategy)))))
         
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
