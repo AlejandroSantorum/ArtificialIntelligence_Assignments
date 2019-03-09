@@ -507,14 +507,16 @@
 ;; us which nodes should be analyzed first. In the A* strategy, the first
 ;; node to be analyzed is the one with the smallest value of g+h
 ;;
+(defun node-f-<= (node-1 node-2)
+  (<= (node-f node-1)
+      (node-f node-2)))
+
 (defparameter *A-star*
   (make-strategy 
    :name 'a-star
    :node-compare-p #'node-f-<=))
 
-(defun node-f-<= (node-1 node-2)
-  (<= (node-f node-1)
-      (node-f node-2)))
+
 ;;
 ;; END: Exercise 8 -- Definition of the A* strategy
 ;;
@@ -576,7 +578,17 @@
 ;;     whole path from the starting node to the final.
 ;;
 (defun graph-search-aux (problem open-nodes closed-nodes strategy)
-  )
+  (let 
+      ((exp-node (first open-nodes))
+       (cl-node (first (member (first open-nodes) closed-nodes :test (problem-f-search-state-equal problem)))))
+    (cond ((and (not (null cl-node)) (funcall (strategy-node-compare-p strategy) cl-node exp-node))
+           (graph-search-aux problem (rest open-nodes) closed-nodes strategy))
+          ((funcall (problem-f-goal-test problem) exp-node) exp-node)
+          (T (graph-search-aux problem (insert-nodes (expand-node exp-node problem) (rest open-nodes) 
+                                                     (strategy-node-compare-p strategy)) 
+                               (insert-nodes (list exp-node) closed-nodes 
+                                             (strategy-node-compare-p strategy)) strategy))))) ;; Limpiar el código
+        
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
@@ -600,13 +612,21 @@
 ;;    and an empty closed list.
 ;;
 (defun graph-search (problem strategy)
-  )
+  (let ((start-node (make-node
+                    :state (problem-initial-state problem)
+                    :parent NIL
+                    :action NIL
+                    :depth 0
+                    :g 0
+                    :h (funcall (problem-f-h problem) (problem-initial-state problem))
+                    :f (funcall (problem-f-h problem) (problem-initial-state problem)))))
+    (graph-search-aux problem (list start-node) '() strategy)))
 
 ;
 ;  A* search is simply a function that solves a problem using the A* strategy
 ;
 (defun a-star-search (problem)
-  )
+  (graph-search problem *A-star*))
 
 
 ;;
