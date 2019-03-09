@@ -646,13 +646,17 @@
 ;*** solution-path ***
 
 (defun solution-path (node)
-  )
+  (if (null node)
+      NIL
+    (append  (solution-path (node-parent node)) (list (node-state node)))))
 
 ;*** action-sequence ***
 ; Visualize sequence of actions
 
 (defun action-sequence (node)
-  )
+  (if (null (node-parent node))
+      NIL
+    (append  (action-sequence (node-parent node)) (list (node-action node)))))
 
 ;;;
 ;;;    END Exercise 10: Solution path / action sequence
