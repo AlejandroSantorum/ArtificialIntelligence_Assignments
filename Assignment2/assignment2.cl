@@ -1,3 +1,14 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;                                                                            ;;
+;;   PROJECT: Assignment 2 - Artificial Intelligence                          ;;
+;;   FILE: assignment2.cl                                                     ;;
+;;   AUTHORS:                                                                 ;;
+;;     · Alejandro Santorum Varela - alejandro.santorum@estudiante.uam.es     ;;
+;;     · Sergio Galan Martin - sergio.galanm@estudiante.uam.es                ;;
+;;   DATE: March 18, 2019                                                     ;;
+;;   VERSION: 1.2                                                             ;;
+;;                                                                            ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
