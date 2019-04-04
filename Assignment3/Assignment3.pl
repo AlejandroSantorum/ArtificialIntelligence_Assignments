@@ -63,13 +63,21 @@ divide([F|R1],N,[F|R2],L) :-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % EXERCISE 5
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-aplasta([], []).
+aplasta(L, Ret) :-
+    aplasta(L, [], Ret).
 
-aplasta([F1|F1], L) :-
-    is_list(F1), aplasta(F1, L). %% El segundo F1 está mal
+aplasta([], Ret, Ret).
 
-aplasta([F|R1], [F|R2]) :-
-    aplasta(R1, R2).
+aplasta([F|R], Aux, Ret) :-
+    is_list(F),
+    !,
+    aplasta(F, Ret2),
+    append(Aux, Ret2, Concat), %%% CONCATENAR!!
+    aplasta(R, Concat, Ret).
+
+aplasta([F|R], Aux, Ret) :-
+    append(Aux, [F], Ret2), %%% CONCATENAR!!
+    aplasta(F, Ret2, Ret).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
