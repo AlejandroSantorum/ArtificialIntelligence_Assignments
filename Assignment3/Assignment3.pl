@@ -72,11 +72,11 @@ aplasta([F|R], Aux, Ret) :-
     is_list(F),
     !,
     aplasta(F, Ret2),
-    append(Aux, Ret2, Concat), %%% CONCATENAR!!
+    concatena(Aux, Ret2, Concat),
     aplasta(R, Concat, Ret).
 
 aplasta([F|R], Aux, Ret) :-
-    append(Aux, [F], Ret2), %%% CONCATENAR!!
+    concatena(Aux, [F], Ret2),
     aplasta(F, Ret2, Ret).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -87,30 +87,59 @@ aplasta([F|R], Aux, Ret) :-
 next_factor(N, F, NF) :-
     F is 2,
     NF is 3;
-    F < sqrt(N),
+    F =< N//2,
     NF is F+2,
     1 is mod(F,2).
 
-primos(1,R,_,_):-
-    R = [].
+primos(1,[],_,_).
+primos(N, [N],_,_). %prime
 
-primos(N, [F|R], F, Init) :-
-    X is N/F,
-    Z is mod(N,F),
-    0 is Z,
-    primos(X, R, F, Init).
+primos(N, [NF|R], F, Init) :-
+    next_factor(Init, F, NF),
+    primos(N, [NF|R], NF, Init).
 
 primos(N, L, F, Init) :-
     next_factor(Init, F, NF),
     primos(N, L, NF, Init).
 
-primos(N, L) :-
-    primos(N, L, 2, N).
+primos(N, [F|R], F, Init) :-
+    0 is mod(N,F),
+    X is div(N,F),
+    primos(X, R, F, Init).
+
+primos(N, L) :- primos(N, L, 2, N), !.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % EXERCISE 7
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+cod_primero(X,[],[],[X]).
+cod_primero(X,[Y|R],[Y|R],[X]) :-
+    not(X is Y).
+cod_primero(X,[X|R],LRem,[X|R2]) :-
+    cod_primero(X,R,LRem,R2).
+
+cod_all([F|R],[E]) :-
+    cod_primero(F,R,[],E).
+cod_all([F1|R1],[F2|R2]) :-
+    cod_primero(F1,R1,Aux,F2), cod_all(Aux,R2).
+
+is_coded([],[0,_]).
+is_coded([F1|R1],[F2,F1]) :-
+    is_coded(R1,[F3,F1]), F2 is F3+1.
+format_list([],[]).
+format_list([F1|R1],[F2|R2]) :-
+    is_coded(F1,F2),format_list(R1,R2).
+run_length(L,L1) :-
+    cod_all(L,Aux),format_list(Aux,L1).
+
+%%is_c([X|Y], [L,X]) :- length([X|Y], L). % Santini implementation
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% EXERCISE 8
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
