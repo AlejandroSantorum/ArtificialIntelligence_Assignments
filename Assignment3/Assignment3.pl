@@ -10,34 +10,29 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % EXERCISE 1
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-duplica([],[]).
+duplica([],[]). % base case
 
-duplica([X|L], [X, X|L1]) :-
-    duplica(L,L1).
+duplica([X|L], [X, X|L1]) :- % first element of L is equal to the first
+    duplica(L,L1).           % and second elements of L1
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % EXERCISE 2
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-concatena([], L, L).
+concatena([], L, L). % base case
 
-concatena([X|L1], L2, [X|L3]) :-
-    concatena(L1, L2, L3).
+concatena([X|L1], L2, [X|L3]) :- % elements of first lists goes first
+    concatena(L1, L2, L3).       % in the concatenated list
 
-%invierte([],Z,Z) :- !.
-%invierte([H|T],Z,Acc) :-
-%   invierte(T,Z,[H|Acc]).
-%invierte(L1, L2) :-
-%   invierte(L1, L2, []).
 
-invierte(Xs, Ys) :-
-    invierte(Xs, [], Ys, Ys).
+invierte([],Z,Z) :- !. % base case
 
-invierte([], Ys, Ys, []).
+invierte([H|T],Z,Acc) :-    % Inserting first element of the first list
+    invierte(T,Z,[H|Acc]).  % at the beginning of the auxiliary list
 
-invierte([X|Xs], Rs, Ys, [_|Bound]) :-
-    invierte(Xs, [X|Rs], Ys, Bound).
+invierte(L1, L2) :-         % Interface for invierte/3
+    invierte(L1, L2, []).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -52,11 +47,12 @@ palindromo(L) :-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % EXERCISE 4
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-divide(L, 0, [], L).
+divide(L, 0, [], L). % base case, L1 is empty, so the rest of the
+                     % elements belogs to L2
 
-divide([F|R1],N,[F|R2],L) :-
+divide([F|R1],N,[F|R2],L) :- % iterating over first N elements of L
     M is N-1,
-    divide(R1, M, R2, L).
+    divide(R1, M, R2, L).    % inserting those N elems into L1
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -76,8 +72,8 @@ aplasta([F|R], Aux, Ret) :-
     aplasta(R, Concat, Ret).
 
 aplasta([F|R], Aux, Ret) :-
-    concatena(Aux, [F], Ret2),
-    aplasta(F, Ret2, Ret).
+    concatena(Aux, [F], Concat),
+    aplasta(R, Concat, Ret).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
