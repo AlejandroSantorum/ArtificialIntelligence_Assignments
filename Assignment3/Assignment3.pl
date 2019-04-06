@@ -182,4 +182,19 @@ encode_list([],[],_). % base case
 encode_list([Fc|Rc],[Fk|Rk],T) :-
     encode_elem(Fc,Fk,T), % using last predicate as auxiliary
     encode_list(Rc,Rk,T). % carry on recursively
+
+
+%%%% MAYBE THIS HAS TO BE FIXED %%%%%%
+build_alphabet_tree(T) :-
+    build_tree([a-0,b-1,c-2,d-3,e-4,f-5,g-6,
+                 h-7,i-8,j-9,k-10,l-11,m-12,
+                 n-13,o-14,p-15,q-16,r-17,
+                 s-18,t-19,u-20,v-21,w-22,
+                 x-23,y-24,z-25], T).
+encode(L,X) :-
+    build_alphabet_tree(T),
+    encode(L,X,T).
+
+encode(L,X,T) :-
+    encode_list(L,X,T).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
