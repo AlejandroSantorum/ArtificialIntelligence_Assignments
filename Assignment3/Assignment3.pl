@@ -110,22 +110,32 @@ primos(N, L) :- primos(N, L, 2, N), !. % interface for primos/4
 % EXERCISE 7
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 cod_primero(X,[],[],[X]).
+
 cod_primero(X,[Y|R],[Y|R],[X]) :-
     not(X is Y).
+
 cod_primero(X,[X|R],LRem,[X|R2]) :-
     cod_primero(X,R,LRem,R2).
 
+
 cod_all([F|R],[E]) :-
     cod_primero(F,R,[],E).
+
 cod_all([F1|R1],[F2|R2]) :-
     cod_primero(F1,R1,Aux,F2), cod_all(Aux,R2).
 
+
 is_coded([],[0,_]).
+
 is_coded([F1|R1],[F2,F1]) :-
     is_coded(R1,[F3,F1]), F2 is F3+1.
+
+
 format_list([],[]).
+
 format_list([F1|R1],[F2|R2]) :-
     is_coded(F1,F2),format_list(R1,R2).
+
 run_length(L,L1) :-
     cod_all(L,Aux),format_list(Aux,L1).
 
@@ -136,9 +146,18 @@ run_length(L,L1) :-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % EXERCISE 8
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+parse(X-Y, X, Y). % parsing element with the form of [a-b] as a and b separately
+
+build_tree([], X) :- % base case: empty list of elements
+    X = tree(nil,nil,nil),!.
+
+build_tree([A], X) :- % base case: list with a single element
+    parse(A, A1, _),
+    X = tree(A1,nil,nil),!.
+
+build_tree([F|R], X) :-
+    parse(F, F1, _), % parsing element
+    build_tree(R,Z), % calling recursively to keep building the tree
+    X = tree(1, tree(F1,nil,nil), Z). % building the tree
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-%last(X,X).
-%last([X|Xs],L) :- last(L,Xs).
