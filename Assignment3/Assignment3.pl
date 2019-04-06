@@ -177,5 +177,9 @@ encode_elem(X1,[1|Rest],T) :-
                             % keep recursively
 
 
+encode_list([],[],_). % base case
 
+encode_list([Fc|Rc],[Fk|Rk],T) :-
+    encode_elem(Fc,Fk,T), % using last predicate as auxiliary
+    encode_list(Rc,Rk,T). % carry on recursively
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
