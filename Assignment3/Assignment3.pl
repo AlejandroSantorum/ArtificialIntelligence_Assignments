@@ -160,4 +160,22 @@ build_tree([F|R], X) :-
     build_tree(R,Z), % calling recursively to keep building the tree
     X = tree(1, tree(F1,nil,nil), Z). % building the tree
 
+
+encode_elem(X1,[F],T) :- % base case
+    T = tree(_, L, _),
+    L = tree(X1,_,_),    % element is found at the left tree
+    F is 0,!.            % the list must contain a 0
+
+encode_elem(X1,[F],T) :- % base case
+    T = tree(_, _, R),
+    R = tree(X1,_,_),    % element is found at the last right tree
+    F is 1,!.
+
+encode_elem(X1,[1|Rest],T) :-
+    T = tree(_, _, R),
+    encode_elem(X1,Rest,R). % the element is not at the left tree, nor the right
+                            % keep recursively
+
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
