@@ -59,19 +59,19 @@ divide([F|R1],N,[F|R2],L) :- % iterating over first N elements of L
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % EXERCISE 5
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-aplasta(L, Ret) :-
+aplasta(L, Ret) :-          % interface for aplasta/3
     aplasta(L, [], Ret).
 
-aplasta([], Ret, Ret).
+aplasta([], Ret, Ret).      % base case
 
 aplasta([F|R], Aux, Ret) :-
-    is_list(F),
+    is_list(F),             % case in which first(L) is a list
     !,
     aplasta(F, Ret2),
-    concatena(Aux, Ret2, Concat),
+    concatena(Aux, Ret2, Concat), % concatenating flatten list with the list got before
     aplasta(R, Concat, Ret).
 
-aplasta([F|R], Aux, Ret) :-
+aplasta([F|R], Aux, Ret) :-   % case in which first(L) is not a list
     concatena(Aux, [F], Concat),
     aplasta(R, Concat, Ret).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -80,30 +80,29 @@ aplasta([F|R], Aux, Ret) :-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % EXERCISE 6
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-next_factor(N, F, NF) :-
+next_factor(N, F, NF) :- % getting possible next factor
     F is 2,
     NF is 3;
-    F =< N//2,
+    F =< N, % we had to fix it from documentation
     NF is F+2,
     1 is mod(F,2).
 
-primos(1,[],_,_).
-primos(N, [N],_,_). %prime
+primos(1,[],_,_). % base case
 
 primos(N, [NF|R], F, Init) :-
-    next_factor(Init, F, NF),
+    next_factor(Init, F, NF), % Initializing factor list if not instanciated
     primos(N, [NF|R], NF, Init).
 
 primos(N, L, F, Init) :-
-    next_factor(Init, F, NF),
+    next_factor(Init, F, NF), % F does not divide N
     primos(N, L, NF, Init).
 
 primos(N, [F|R], F, Init) :-
-    0 is mod(N,F),
+    0 is mod(N,F),  % case in which F divides N
     X is div(N,F),
     primos(X, R, F, Init).
 
-primos(N, L) :- primos(N, L, 2, N), !.
+primos(N, L) :- primos(N, L, 2, N), !. % interface for primos/4
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
