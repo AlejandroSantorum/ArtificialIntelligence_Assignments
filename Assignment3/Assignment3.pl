@@ -207,7 +207,7 @@ freq_elem(_, [], _, 0).
 freq_elem(Elem, [Elem|R], Freq, Actual) :-
     freq_elem(Elem, R, Freq, Next),
     Actual is Next+1.
-    
+
 freq_elem(Elem, [_|R], Freq, Actual) :-
     freq_elem(Elem, R, Freq, Actual).
 
@@ -223,3 +223,23 @@ frequencies([Elem|Rest], [LFf|LFr]) :-
     freq_elem(Elem, [Elem|Rest], Freq),
     delete_elem(Elem, Rest, Clean),
     frequencies(Clean, LFr).
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% "Dictionaries" are problematic, so we are implementing the allowed
+%%% symbols data structure as a list (at least for now...)
+test(L) :- % Testing function, it'll be deleted
+    Allowed_symbols = [a,b,c,d,e,f,g,h,i,j,k,l],
+    belong(L,Allowed_symbols).
+
+% Checking all the expression's symbols are allowed
+belong([],_).
+belong([Elem|Ls],Symbols) :-
+	elem_belong(Elem,Symbols),
+	belong(Ls,Symbols).
+
+% Checking a given element is allowed comparing it with the allowed symbols list
+elem_belong(Elem, [Elem|_]).
+elem_belong(Elem, [_|Ss]) :-
+    elem_belong(Elem,Ss).
