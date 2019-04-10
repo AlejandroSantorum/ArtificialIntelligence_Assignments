@@ -198,3 +198,28 @@ encode(L,X) :-
 encode(L,X,T) :-
     encode_list(L,X,T).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+freq_elem(Elem, List, Freq) :-
+    freq_elem(Elem, List, Freq, Freq),!.
+
+freq_elem(_, [], _, 0).
+
+freq_elem(Elem, [Elem|R], Freq, Actual) :-
+    freq_elem(Elem, R, Freq, Next),
+    Actual is Next+1.
+    
+freq_elem(Elem, [_|R], Freq, Actual) :-
+    freq_elem(Elem, R, Freq, Actual).
+
+delete_elem(_, [], []).
+delete_elem(X, [X|Xs], Y) :-
+    delete_elem(X, Xs, Y), !.
+delete_elem(X, [T|Xs], [T|Y]) :-
+    delete_elem(X, Xs, Y).
+
+frequencies([],[]).
+frequencies([Elem|Rest], [LFf|LFr]) :-
+    parse(LFf, Elem, Freq),
+    freq_elem(Elem, [Elem|Rest], Freq),
+    delete_elem(Elem, Rest, Clean),
+    frequencies(Clean, LFr).
