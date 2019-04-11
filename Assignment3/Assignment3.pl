@@ -244,35 +244,34 @@ elem_belong(Elem, [Elem|_]).
 elem_belong(Elem, [_|Ss]) :-
     elem_belong(Elem,Ss).
 
+    
+list_max([L|Ls],Max) :-
+    list_max(Ls,L,Max),!.
 
+list_max([],Max,Max).
 
-list_min([L|Ls],Min) :-
-    list_min(Ls,L,Min),!.
+list_max([L|Ls],Max0,Max) :-
+    parse(Max0,_,MaxNum1),
+    parse(L,_,MaxNum2),
+    MaxNum1 is max(MaxNum1,MaxNum2),
+    list_max(Ls,Max0,Max).
 
-list_min([],Min,Min).
-
-list_min([L|Ls],Min0,Min) :-
-    parse(Min0,_,MinNum1),
-    parse(L,_,MinNum2),
-    MinNum1 is min(MinNum1,MinNum2),
-    list_min(Ls,Min0,Min).
-
-list_min([L|Ls],Min0,Min) :-
-    parse(Min0,_,MinNum1),
-    parse(L,_,MinNum2),
-    MinNum2 is min(MinNum1,MinNum2),
-    list_min(Ls,L,Min).
+list_max([L|Ls],Max0,Max) :-
+    parse(Max0,_,MaxNum1),
+    parse(L,_,MaxNum2),
+    MaxNum2 is max(MaxNum1,MaxNum2),
+    list_max(Ls,L,Max).
 
 delete_letter(_,[],[]).
 delete_letter(Let,[Let|R],R):-!.
 delete_letter(Let,[F|R],[F|Result]) :-
     delete_letter(Let,R,Result).
 
-minimum(Ls,A,Ys) :-
-    list_min(Ls,A),
+maximum(Ls,A,Ys) :-
+    list_max(Ls,A),
     delete_letter(A,Ls,Ys).
 
 freq_sort([],[]).
 
 freq_sort(L,[M|Rs]) :-
-    minimum(L,M,Rest),freq_sort(Rest,Rs).
+    maximum(L,M,Rest),freq_sort(Rest,Rs).
