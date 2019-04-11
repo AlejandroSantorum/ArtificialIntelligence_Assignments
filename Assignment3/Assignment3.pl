@@ -229,9 +229,14 @@ frequencies([Elem|Rest], [LFf|LFr]) :-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% "Dictionaries" are problematic, so we are implementing the allowed
 %%% symbols data structure as a list (at least for now...)
-test(L) :- % Testing function, it'll be deleted
-    Allowed_symbols = [a,b,c,d,e,f,g,h,i,j,k,l],
-    belong(L,Allowed_symbols).
+test(L,X) :- % Testing function, it'll be deleted
+    Allowed_symbols = [a,b,c,d,e,f,g,h,i,j,k,l,m,n,
+                        ñ,o,p,q,r,s,t,u,v,w,x,y,z],
+    belong(L,Allowed_symbols),
+    frequencies(L,LF),
+    freq_sort(LF,SL),
+    build_tree(SL,T),
+    encode_list(L,X,T).
 
 % Checking all the expression's symbols are allowed
 belong([],_).
@@ -244,7 +249,7 @@ elem_belong(Elem, [Elem|_]).
 elem_belong(Elem, [_|Ss]) :-
     elem_belong(Elem,Ss).
 
-    
+
 list_max([L|Ls],Max) :-
     list_max(Ls,L,Max),!.
 
