@@ -243,3 +243,36 @@ belong([Elem|Ls],Symbols) :-
 elem_belong(Elem, [Elem|_]).
 elem_belong(Elem, [_|Ss]) :-
     elem_belong(Elem,Ss).
+
+
+
+list_min([L|Ls],Min) :-
+    list_min(Ls,L,Min),!.
+
+list_min([],Min,Min).
+
+list_min([L|Ls],Min0,Min) :-
+    parse(Min0,_,MinNum1),
+    parse(L,_,MinNum2),
+    MinNum1 is min(MinNum1,MinNum2),
+    list_min(Ls,Min0,Min).
+
+list_min([L|Ls],Min0,Min) :-
+    parse(Min0,_,MinNum1),
+    parse(L,_,MinNum2),
+    MinNum2 is min(MinNum1,MinNum2),
+    list_min(Ls,L,Min).
+
+delete_letter(_,[],[]).
+delete_letter(Let,[Let|R],R):-!.
+delete_letter(Let,[F|R],[F|Result]) :-
+    delete_letter(Let,R,Result).
+
+minimum(Ls,A,Ys) :-
+    list_min(Ls,A),
+    delete_letter(A,Ls,Ys).
+
+freq_sort([],[]).
+
+freq_sort(L,[M|Rs]) :-
+    minimum(L,M,Rest),freq_sort(Rest,Rs).
