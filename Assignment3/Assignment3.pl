@@ -184,21 +184,6 @@ encode_list([Fc|Rc],[Fk|Rk],T) :-
     encode_list(Rc,Rk,T). % carry on recursively
 
 
-%%%% MAYBE THIS HAS TO BE FIXED %%%%%%
-build_alphabet_tree(T) :-
-    build_tree([a-0,b-1,c-2,d-3,e-4,f-5,g-6,
-                 h-7,i-8,j-9,k-10,l-11,m-12,
-                 n-13,o-14,p-15,q-16,r-17,
-                 s-18,t-19,u-20,v-21,w-22,
-                 x-23,y-24,z-25], T).
-encode(L,X) :-
-    build_alphabet_tree(T),
-    encode(L,X,T).
-
-encode(L,X,T) :-
-    encode_list(L,X,T).
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 freq_elem(Elem, List, Freq) :-
     freq_elem(Elem, List, Freq, Freq),!.
 
@@ -217,26 +202,26 @@ delete_elem(X, [X|Xs], Y) :-
 delete_elem(X, [T|Xs], [T|Y]) :-
     delete_elem(X, Xs, Y).
 
-frequencies([],[]).
-frequencies([Elem|Rest], [LFf|LFr]) :-
+
+frequencies([],_,[]).
+frequencies([Elem|Rest], L, [LFf|LFr]) :-
     parse(LFf, Elem, Freq),
-    freq_elem(Elem, [Elem|Rest], Freq),
-    delete_elem(Elem, Rest, Clean),
-    frequencies(Clean, LFr).
+    freq_elem(Elem, L, Freq),
+    %delete_elem(Elem, Rest, Clean),
+    frequencies(Rest,L,LFr).
 
+dictionary([a,b,c,d,e,f,g,h,i,j,k,l,m,
+            n,o,p,q,r,s,t,u,v,w,x,y,z]).
 
+encode(L,X) :-
+    dictionary(Allowed_symbols), % Creating dictionary of allowed symbols
+    invierte(Allowed_symbols, Symbols), % Inverting symbols
+    belong(L,Symbols), % Checking all the expression list's symbols are allowed
+    frequencies(Symbols,L,LF), % Calculating frequencies of each symbol
+    freq_sort(LF,SL), % Sorting symbols by frequency
+    build_tree(SL,T), % Building the tree
+    encode_list(L,X,T). % Encoding the expression
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%% "Dictionaries" are problematic, so we are implementing the allowed
-%%% symbols data structure as a list (at least for now...)
-test(L,X) :- % Testing function, it'll be deleted
-    Allowed_symbols = [a,b,c,d,e,f,g,h,i,j,k,l,m,n,
-                        ñ,o,p,q,r,s,t,u,v,w,x,y,z],
-    belong(L,Allowed_symbols),
-    frequencies(L,LF),
-    freq_sort(LF,SL),
-    build_tree(SL,T),
-    encode_list(L,X,T).
 
 % Checking all the expression's symbols are allowed
 belong([],_).
