@@ -166,59 +166,53 @@ parse(X-Y, X, Y). % parsing element with the form of [a-b] as a and b separately
 
 build_tree([], X) :- % base case: empty list of elements
     X = tree(nil,nil,nil),!.
-
 build_tree([A], X) :- % base case: list with a single element
     parse(A, A1, _),
     X = tree(A1,nil,nil),!.
-
 build_tree([F|R], X) :-
     parse(F, F1, _), % parsing element
     build_tree(R,Z), % calling recursively to keep building the tree
     X = tree(1, tree(F1,nil,nil), Z). % building the tree
 
 
+% Encodes an element
 encode_elem(X1,[F],T) :- % base case
     T = tree(_, L, _),
     L = tree(X1,_,_),    % element is found at the left tree
     F is 0,!.            % the list must contain a 0
-
 encode_elem(X1,[F],T) :- % base case
     T = tree(_, _, R),
     R = tree(X1,_,_),    % element is found at the last right tree
     F is 1,!.
-
 encode_elem(X1,[1|Rest],T) :-
     T = tree(_, _, R),
     encode_elem(X1,Rest,R). % the element is not at the left tree, nor the right
                             % keep recursively
 
-
+% Encodes a whole list
 encode_list([],[],_). % base case
-
 encode_list([Fc|Rc],[Fk|Rk],T) :-
     encode_elem(Fc,Fk,T), % using last predicate as auxiliary
     encode_list(Rc,Rk,T). % carry on recursively
 
 
+
+% Calculates the frequency of a given element in a given list
 freq_elem(Elem, List, Freq) :-
     freq_elem(Elem, List, Freq, Freq),!.
-
 freq_elem(_, [], _, 0).
-
 freq_elem(Elem, [Elem|R], Freq, Actual) :-
     freq_elem(Elem, R, Freq, Next),
     Actual is Next+1.
-
 freq_elem(Elem, [_|R], Freq, Actual) :-
     freq_elem(Elem, R, Freq, Actual).
 
-
+% Calculates the frequency of the elements of a given list
 frequencies([],_,[]).
 frequencies([Elem|Rest], L, [LFf|LFr]) :-
     parse(LFf, Elem, Freq),
     freq_elem(Elem, L, Freq),
     frequencies(Rest,L,LFr).
-
 
 % Checking a given element is allowed comparing it with the allowed symbols list
 elem_belong(Elem, [Elem|_]).
@@ -231,38 +225,38 @@ belong([Elem|Ls],Symbols) :-
 	elem_belong(Elem,Symbols),
 	belong(Ls,Symbols).
 
-
+% Calculates the maximum element of a list
 list_max([L|Ls],Max) :-
     list_max(Ls,L,Max),!.
-
 list_max([],Max,Max).
-
 list_max([L|Ls],Max0,Max) :-
     parse(Max0,_,MaxNum1),
     parse(L,_,MaxNum2),
     MaxNum1 is max(MaxNum1,MaxNum2),
     list_max(Ls,Max0,Max).
-
 list_max([L|Ls],Max0,Max) :-
     parse(Max0,_,MaxNum1),
     parse(L,_,MaxNum2),
     MaxNum2 is max(MaxNum1,MaxNum2),
     list_max(Ls,L,Max).
 
+% Deletes a given element of a list
 delete_letter(_,[],[]).
 delete_letter(Let,[Let|R],R):-!.
 delete_letter(Let,[F|R],[F|Result]) :-
     delete_letter(Let,R,Result).
 
+% Calculates and deletes the maximum of a list
 maximum(Ls,A,Ys) :-
     list_max(Ls,A),
     delete_letter(A,Ls,Ys).
 
+% Sorts the given list by frequency
 freq_sort([],[]).
-
 freq_sort(L,[M|Rs]) :-
     maximum(L,M,Rest),freq_sort(Rest,Rs).
 
+% Dictionary for this assignment
 dictionary([a,b,c,d,e,f,g,h,i,j,k,l,m,
             n,o,p,q,r,s,t,u,v,w,x,y,z]).
 
