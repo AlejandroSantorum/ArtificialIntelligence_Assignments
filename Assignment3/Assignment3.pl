@@ -26,13 +26,27 @@ concatena([X|L1], L2, [X|L3]) :- % elements of first lists goes first
     concatena(L1, L2, L3).       % in the concatenated list
 
 
-invierte([],Z,Z) :- !. % base case
+%invierte([],Z,Z) :- !. % base case
 
-invierte([H|T],Z,Acc) :-    % Inserting first element of the first list
-    invierte(T,Z,[H|Acc]).  % at the beginning of the auxiliary list
+%invierte([H|T],Z,Acc) :-    % Inserting first element of the first list
+%    invierte(T,Z,[H|Acc]).  % at the beginning of the auxiliary list
 
-invierte(L1, L2) :-         % Interface for invierte/3
-    invierte(L1, L2, []).
+%invierte(L1, L2) :-         % Interface for invierte/3
+%    invierte(L1, L2, []).
+
+% Auxiliary function
+last_and_rest([X],X, []).
+% It is supposed to return the entire list but the last element
+last_and_rest([A|Xs],E, [A|L]) :-
+    last_and_rest(Xs, E, L).
+
+invierte([],[]). % base case
+
+invierte([X], [X]):-!. % base case
+
+invierte([X|R], L) :-
+    last_and_rest(L, X, Rest), % checking that X is the last element of
+    invierte(R, Rest),!.       % the reversed list
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -51,8 +65,8 @@ divide(L, 0, [], L). % base case, L1 is empty, so the rest of the
                      % elements belogs to L2
 
 divide([F|R1],N,[F|R2],L) :- % iterating over first N elements of L
-    M is N-1,
-    divide(R1, M, R2, L).    % inserting those N elems into L1
+    divide(R1, M, R2, L),    % inserting those N elems into L1
+    N is M+1.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -60,7 +74,7 @@ divide([F|R1],N,[F|R2],L) :- % iterating over first N elements of L
 % EXERCISE 5
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 aplasta(L, Ret) :-          % interface for aplasta/3
-    aplasta(L, [], Ret).
+    aplasta(L, [], Ret),!.
 
 aplasta([], Ret, Ret).      % base case
 
@@ -122,24 +136,26 @@ cod_all([F|R],[E]) :-
     cod_primero(F,R,[],E).
 
 cod_all([F1|R1],[F2|R2]) :-
-    cod_primero(F1,R1,Aux,F2), cod_all(Aux,R2).
+    cod_primero(F1,R1,Aux,F2),
+    cod_all(Aux,R2).
 
 
 is_coded([],[0,_]).
 
 is_coded([F1|R1],[F2,F1]) :-
-    is_coded(R1,[F3,F1]), F2 is F3+1.
+    is_coded(R1,[F3,F1]),
+    F2 is F3+1.
 
 
 format_list([],[]).
 
 format_list([F1|R1],[F2|R2]) :-
-    is_coded(F1,F2),format_list(R1,R2).
+    is_coded(F1,F2),
+    format_list(R1,R2).
 
 run_length(L,L1) :-
-    cod_all(L,Aux),format_list(Aux,L1).
-
-%%is_c([X|Y], [L,X]) :- length([X|Y], L). % Santini implementation
+    cod_all(L,Aux),
+    format_list(Aux,L1).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -196,43 +212,24 @@ freq_elem(Elem, [Elem|R], Freq, Actual) :-
 freq_elem(Elem, [_|R], Freq, Actual) :-
     freq_elem(Elem, R, Freq, Actual).
 
-delete_elem(_, [], []).
-delete_elem(X, [X|Xs], Y) :-
-    delete_elem(X, Xs, Y), !.
-delete_elem(X, [T|Xs], [T|Y]) :-
-    delete_elem(X, Xs, Y).
-
 
 frequencies([],_,[]).
 frequencies([Elem|Rest], L, [LFf|LFr]) :-
     parse(LFf, Elem, Freq),
     freq_elem(Elem, L, Freq),
-    %delete_elem(Elem, Rest, Clean),
     frequencies(Rest,L,LFr).
 
-dictionary([a,b,c,d,e,f,g,h,i,j,k,l,m,
-            n,o,p,q,r,s,t,u,v,w,x,y,z]).
 
-encode(L,X) :-
-    dictionary(Allowed_symbols), % Creating dictionary of allowed symbols
-    invierte(Allowed_symbols, Symbols), % Inverting symbols
-    belong(L,Symbols), % Checking all the expression list's symbols are allowed
-    frequencies(Symbols,L,LF), % Calculating frequencies of each symbol
-    freq_sort(LF,SL), % Sorting symbols by frequency
-    build_tree(SL,T), % Building the tree
-    encode_list(L,X,T). % Encoding the expression
-
+% Checking a given element is allowed comparing it with the allowed symbols list
+elem_belong(Elem, [Elem|_]).
+elem_belong(Elem, [_|Ss]) :-
+    elem_belong(Elem,Ss).
 
 % Checking all the expression's symbols are allowed
 belong([],_).
 belong([Elem|Ls],Symbols) :-
 	elem_belong(Elem,Symbols),
 	belong(Ls,Symbols).
-
-% Checking a given element is allowed comparing it with the allowed symbols list
-elem_belong(Elem, [Elem|_]).
-elem_belong(Elem, [_|Ss]) :-
-    elem_belong(Elem,Ss).
 
 
 list_max([L|Ls],Max) :-
@@ -265,3 +262,15 @@ freq_sort([],[]).
 
 freq_sort(L,[M|Rs]) :-
     maximum(L,M,Rest),freq_sort(Rest,Rs).
+
+dictionary([a,b,c,d,e,f,g,h,i,j,k,l,m,
+            n,o,p,q,r,s,t,u,v,w,x,y,z]).
+
+encode(L,X) :-
+    dictionary(Allowed_symbols), % Creating dictionary of allowed symbols
+    invierte(Allowed_symbols, Symbols), % Inverting symbols
+    belong(L,Symbols), % Checking all the expression list's symbols are allowed
+    frequencies(Symbols,L,LF), % Calculating frequencies of each symbol
+    freq_sort(LF,SL), % Sorting symbols by frequency
+    build_tree(SL,T), % Building the tree
+    encode_list(L,X,T). % Encoding the expression
