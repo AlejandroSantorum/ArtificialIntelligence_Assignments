@@ -7,7 +7,6 @@
 (defvar *alias* '|KingAfrica|) ; alias que aparece en el ranking
 
 (defun heuristica (estado)
-  ; current player standpoint
   (let* ((tablero (estado-tablero estado))
 	 (ficha-actual (estado-turno estado))
 	 (ficha-oponente (siguiente-jugador ficha-actual)))
